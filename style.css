@@ -54,6 +54,25 @@
             overflow-x: hidden;
         }
 
+        /* ═══════════════════════════════════════════
+           CUSTOM SCROLLBAR
+        ═══════════════════════════════════════════ */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 5px;
+            border: 2px solid var(--bg);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
         a {
             text-decoration: none;
         }
@@ -98,6 +117,14 @@
             pointer-events: none;
             z-index: 0;
             opacity: .18;
+            animation: blobFloat 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes blobFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0, 0) scale(1); }
         }
 
         .blob-1 {
@@ -106,6 +133,7 @@
             top: -150px;
             left: -100px;
             background: radial-gradient(circle, #00d4d8, transparent);
+            animation-duration: 25s;
         }
 
         .blob-2 {
@@ -114,6 +142,8 @@
             top: 40%;
             right: -120px;
             background: radial-gradient(circle, #f5a623, transparent);
+            animation-duration: 30s;
+            animation-delay: -5s;
         }
 
         .blob-3 {
@@ -122,6 +152,8 @@
             bottom: -100px;
             left: 30%;
             background: radial-gradient(circle, #4da6ff, transparent);
+            animation-duration: 22s;
+            animation-delay: -10s;
         }
 
         /* ═══════════════════════════════════════════
@@ -269,12 +301,36 @@
             display: flex;
             align-items: flex-start;
             gap: 16px;
-            transition: transform .2s, box-shadow .2s;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity .4s ease, transform .4s ease, box-shadow .2s;
         }
 
-        .kpi-card:hover {
-            transform: translateY(-3px);
+        .kpi-card::after {
+            content: '';
+            position: absolute;
+            top: 0; 
+            left: -100%; 
+            width: 50%; 
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+            transform: skewX(-20deg);
+            transition: left 0.6s ease;
+            pointer-events: none;
+        }
+
+        .kpi-card.visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        .kpi-card.visible:hover {
+            transform: translateY(-4px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, .4);
+        }
+
+        .kpi-card.visible:hover::after {
+            left: 150%;
         }
 
         .kpi-icon-wrap {
@@ -606,6 +662,13 @@
             padding: 14px 16px;
             position: relative;
             overflow: hidden;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .db-kpi:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .db-kpi-icon {
@@ -664,6 +727,11 @@
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
             padding: 14px 16px;
+            transition: border-color .3s;
+        }
+
+        .db-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .db-card-title {
@@ -771,6 +839,7 @@
             color: var(--txt);
             border-bottom: 1px solid var(--border);
             white-space: nowrap;
+            transition: background .2s;
         }
 
         tbody tr:last-child td {
@@ -1032,16 +1101,7 @@
             transform: none;
         }
 
-        .kpi-card {
-            opacity: 0;
-            transform: translateY(16px);
-            transition: opacity .4s ease, transform .4s ease, box-shadow .2s;
-        }
-
-        .kpi-card.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        /* kpi-card reveal moved to top */
 
         /* ═══════════════════════════════════════════
        RESPONSIVE
@@ -1050,10 +1110,23 @@
             .header-inner {
                 grid-template-columns: 1fr;
                 text-align: center;
+                gap: 16px;
+            }
+
+            .header-title {
+                font-size: 32px;
             }
 
             .header-meta {
                 text-align: center;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                gap: 16px;
+            }
+
+            .meta-label {
+                display: none;
             }
 
             .kpi-grid {
@@ -1079,10 +1152,41 @@
             .db-row3 {
                 grid-template-columns: 1fr;
             }
+
+            .footer-inner {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+
+            .footer-links {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
         }
 
         @media (max-width: 540px) {
             .kpi-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .db-kpi-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header-title {
+                font-size: 28px;
+            }
+
+            .filter-row {
+                justify-content: center;
+            }
+            
+            .db-card-title {
+                text-align: center;
+            }
+
+            .kpi-card::after {
+                display: none;
             }
         }
